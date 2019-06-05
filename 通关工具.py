@@ -9,9 +9,6 @@ def get_plot_complete(t):
 	tcp=template_cursor.fetchone()[0]
 	if tcp==1 or tcp==3:return 1
 	else:return 0
-	# elif tcp==0:return 0
-	# else:
-	# 	print('暂不支持关卡类型为2或4的关卡')
 
 #获取combate_win的值
 def get_combate_win(w):
@@ -20,9 +17,6 @@ def get_combate_win(w):
 	tcc=template_cursor.fetchone()[0]
 	if tcc==0 or tcc==3:return 1
 	else:return 0
-	# elif tcc==1:return 0
-	# else:
-	# 	print('暂不支持关卡类型为2或4的关卡')
 
 #获取stars的值
 def get_stars(a):
@@ -58,27 +52,27 @@ def judgeidisexist():
 
 #生成最终序列
 def generatelis(f,i):
-	if f==():
+	if f==[]:
 		finalidlist=i[:i.index(count_id)+1]
 	elif f[-1]<count_id:
 		finalidlist=i[f.index(f[-1])+1:i.index(count_id)+1]
 	else:
 		print('错误：关卡ID不能小于或等于已通关的ID，请重新输入')
 		print(' ')
-		exit()# continue
+		finalidlist='error'
 	return finalidlist
 
 # 连接数据库
-# run=json.load(open('IP配置.json'))
-# ip=run['服务器IP']
-# password=run['密码']
-# users=run['用户名']
-# ports=run['端口号']
-logic=pymysql.connect(host='127.0.0.1',port=3306,user='root',password='12345678',db='logic')
+run=json.load(open('IP配置.json'))
+ip=run['服务器IP']
+password=run['密码']
+users=run['用户名']
+ports=run['端口号']
+logic=pymysql.connect(host='%s'%ip,port=ports,user='%s'%users,password='%s'%password,db='logic')
 logic_cursor = logic.cursor()
-template=pymysql.connect(host='127.0.0.1',port=3306,user='root',password='12345678',db='template')
+template=pymysql.connect(host='%s'%ip,port=ports,user='%s'%users,password='%s'%password,db='template')
 template_cursor = template.cursor()
-#生成所有的关卡序列
+#生成所有关卡的序列
 idnum1='select id from StageData where Diffculty=1'
 template_cursor.execute(idnum1)
 tc1=template_cursor.fetchall()
@@ -93,6 +87,10 @@ for m in tc2:idlist2.append(m[0])
 while True:
 	player_name=input('输入角色账号：')
 	count_id=int(input('输入要通过关卡ID：'))
+	if count_id>20000:
+		print('错误：暂不支持关卡类型为2的关卡，请重新输入')
+		print(' ')
+		continue
 	if judgeidisexist()=='iderror':
 		continue
 	finishediddata="select id from story where account='%s'"%player_name
@@ -107,18 +105,19 @@ while True:
 			finishedidcount1.append(n)
 		else:
 			finishedidcount2.append(n)
-	# if judgeidtype()=='iderror':
-	# 	continue
+	finalidlist=[]
 	if count_id in idlist1:
-		generatelis(finishedidcount1,idlist1)
+		if generatelis(finishedidcount1,idlist1)=='error':
+			continue
+		else:
+			finalidlist=generatelis(finishedidcount1,idlist1)
 	else:
-		generatelis(finishedidcount2,idlist2)
-
-
-
+		if generatelis(finishedidcount2,idlist2)=='error':
+			continue
+		else:
+			finalidlist=generatelis(finishedidcount2,idlist2)
 
 	#根据通关序列插入数据库
-	finalidlist=[]
 	sql='INSERT INTO story (account,id,limit_sec,plot_complete,finished_count,plot_nodes,\
 		combate_limit,combate_win,stars,kill_monsters,last_phalanx,\
 		reset_limit) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
@@ -127,14 +126,6 @@ while True:
 		logic.commit()
 	print('数据插入成功')
 	print(' ')
-
-
-
-
-# import pymysql
-# import pymysql.cursors
-# template=pymysql.connect(host='192.168.102.175',port=3306,user='root',password='51501372',db='template')
-# template_cursor = template.cursor()
 
 
 
