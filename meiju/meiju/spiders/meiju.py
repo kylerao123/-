@@ -11,6 +11,8 @@ class meijuspider(scrapy.Spider):
         for each in movies:
             item=MeijuItem()
             item['name']=each.xpath('./h5/a/@title').extract()[0]
+            times=each.xpath('./div[2][@class="lasted-time new100time fn-right"]')
+            item['time']=times.xpath('string(.)').extract()[0]
             item['classification']=each.xpath('./span[2][@class="mjjq"]/text()').extract()[0]
             # print(item['classification'])
             yield item
