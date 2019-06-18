@@ -8,6 +8,7 @@ class meijuspider(scrapy.Spider):
 
     def parse(self,response):
         movies=response.xpath("//ul[@class='top-list  fn-clear']/li")
+        print(movies)
         for each in movies:
             item=MeijuItem()
             item['name']=each.xpath('./h5/a/@title').extract()[0]
