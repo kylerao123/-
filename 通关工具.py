@@ -121,6 +121,7 @@ while True:
 	sql='INSERT INTO story (account,id,limit_sec,plot_complete,finished_count,plot_nodes,\
 		combate_limit,combate_win,stars,kill_monsters,last_phalanx,\
 		reset_limit) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
+	print('________________________')
 	for xid in finalidlist:
 		logic_cursor.execute(sql,stagedatas(xid))
 		logic.commit()
