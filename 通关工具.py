@@ -4,7 +4,7 @@ import json
 
 # 获取plot_complete的值
 def get_plot_complete(t):
-	plotlis='select type from StageData where id=%s'%t
+	plotlis='select Type from StageData where id=%s'%t
 	template_cursor.execute(plotlis)
 	tcp=template_cursor.fetchone()[0]
 	if tcp==1 or tcp==3:return 1
@@ -12,7 +12,7 @@ def get_plot_complete(t):
 
 #获取combate_win的值
 def get_combate_win(w):
-	combatelis='select type from StageData where id=%s'%w
+	combatelis='select Type from StageData where id=%s'%w
 	template_cursor.execute(combatelis)
 	tcc=template_cursor.fetchone()[0]
 	if tcc==0 or tcc==3:return 1
@@ -20,7 +20,7 @@ def get_combate_win(w):
 
 #获取stars的值
 def get_stars(a):
-	starslis='select type from StageData where id=%s'%a
+	starslis='select Type from StageData where id=%s'%a
 	template_cursor.execute(starslis)
 	tcs=template_cursor.fetchone()[0]
 	if tcs==0 or tcs==3:return '2,3,4'
@@ -55,7 +55,7 @@ def generatelis(f,i):
 	if f==[]:
 		finalidlist=i[:i.index(count_id)+1]
 	elif f[-1]<count_id:
-		finalidlist=i[f.index(f[-1])+1:i.index(count_id)+1]
+		finalidlist=i[i.index(f[-1])+1:i.index(count_id)+1]
 	else:
 		print('错误：关卡ID不能小于或等于已通关的ID，请重新输入')
 		print(' ')
@@ -72,6 +72,7 @@ logic=pymysql.connect(host='%s'%ip,port=ports,user='%s'%users,password='%s'%pass
 logic_cursor = logic.cursor()
 template=pymysql.connect(host='%s'%ip,port=ports,user='%s'%users,password='%s'%password,db='template')
 template_cursor = template.cursor()
+
 #生成所有关卡的序列
 idnum1='select id from StageData where Diffculty=1'
 template_cursor.execute(idnum1)
@@ -121,7 +122,6 @@ while True:
 	sql='INSERT INTO story (account,id,limit_sec,plot_complete,finished_count,plot_nodes,\
 		combate_limit,combate_win,stars,kill_monsters,last_phalanx,\
 		reset_limit) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
-	print('________________________')
 	for xid in finalidlist:
 		logic_cursor.execute(sql,stagedatas(xid))
 		logic.commit()
