@@ -23,8 +23,9 @@ ports=run['端口号']
 logic=pymysql.connect(host='%s'%ip,port=ports,user='%s'%users,password='%s'%password,db='logic')
 logic_cursor = logic.cursor()
 
+player_name=input('输入角色账号：')
+
 while True:
-	player_name=input('输入角色账号：')
 	name_num=input('输入物品ID和数量：')
 	name=name_num.split(' ')[0]
 	num=int(name_num.split(' ')[1])
